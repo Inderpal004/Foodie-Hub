@@ -4,6 +4,8 @@ import ItemCard from '../ItemCard/ItemCard';
 import { useSelector } from 'react-redux';
 import { TiShoppingCart } from "react-icons/ti";
 import { useNavigate } from 'react-router-dom';
+import { useAuth0 } from "@auth0/auth0-react";
+import toast from 'react-hot-toast';
 
 export default function Cart() {
 
@@ -13,6 +15,8 @@ export default function Cart() {
   const cartItems = useSelector((state) => state.cart.cart);
   const totalQty = cartItems.reduce((totalQty, item) => totalQty + item.qty, 0);
   const totalPrice = cartItems.reduce((total,item) => total + item.qty * item.price,0)
+
+  const { isAuthenticated} = useAuth0();
 
   return (
     <>
@@ -34,7 +38,13 @@ export default function Cart() {
           <h3 className="font-semibold text-gray-800">Items : {totalQty}</h3>
           <h3 className="font-semibold text-gray-800">Total Amount : {totalPrice}</h3>
           <hr className="w-[90vw] lg:w-[18vw] my-2" />
-          <button onClick={()=> navigate("/success")} className="bg-green-500 font-bold px-3 text-white py-2 rounded-lg w-[90vw] md:w-[35vw] lg:w-[18vw] mb-5">Checkout</button>
+          <button onClick={()=> {
+            if(isAuthenticated){
+              navigate("/success")
+            }else{
+              toast.error("Please Login Before Checkout !!")
+            }
+          }} className="bg-green-500 font-bold px-3 text-white py-2 rounded-lg w-[90vw] md:w-[35vw] lg:w-[18vw] mb-5">Checkout</button>
         </div>
       </div>
 
